@@ -6,8 +6,14 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@artifacts/*": ["./artifacts/src/contracts/*"],
+      "@contract-types/*": ["./src/types/*"]
+    }
   },
+
   "include": [
     "hardhat.config.ts",
     "./deploy",
