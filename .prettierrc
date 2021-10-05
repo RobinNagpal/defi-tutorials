@@ -1,0 +1,5 @@
+{
+  "printWidth": 150,
+  "pluginSearchDirs": ["./node_modules"],
+  "plugins": ["./node_modules/prettier-plugin-solidity", "./node_modules/@trivago/prettier-plugin-sort-imports"]
+}
