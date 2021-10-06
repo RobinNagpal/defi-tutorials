@@ -1,6 +1,120 @@
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grow from "@mui/material/Grow";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Paper from "@mui/material/Paper";
+import Popper from "@mui/material/Popper";
 import React from "react";
 import TokenAmount from "token-amount";
-import { ConnectionRejectedError, UseWalletProvider, useWallet } from "use-wallet";
+import { ConnectionRejectedError, useWallet } from "use-wallet";
+
+interface WalletProvider {
+  label: string;
+  handler: () => void;
+}
+
+function SplitButton() {
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef<any>(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(-1);
+
+  const wallet = useWallet();
+  const activate = (connector: string) => wallet.connect(connector);
+
+  const options: WalletProvider[] = [
+    { label: "Metamask", handler: () => activate("injected") },
+    { label: "frame", handler: () => activate("frame") },
+    { label: "portis", handler: () => activate("portis") },
+    { label: "fortmatic", handler: () => activate("fortmatic") },
+    { label: "torus", handler: () => activate("torus") },
+    { label: "walletconnect", handler: () => activate("walletconnect") },
+    { label: "walletlink", handler: () => activate("walletlink") },
+  ];
+
+  const handleMenuItemClick = (event: React.SyntheticEvent, index: number) => {
+    setSelectedIndex(index);
+    setOpen(false);
+  };
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: MouseEvent | TouchEvent) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const resetWallet = () => {
+    wallet.reset();
+    setSelectedIndex(-1);
+  };
+  if (wallet.status === "connected") {
+    return (
+      <ButtonGroup>
+        <Button onClick={() => resetWallet()} color="primary">
+          Disconnect
+        </Button>
+      </ButtonGroup>
+    );
+  }
+
+  if (wallet.status === "connecting") {
+    return <Button>Connecting...</Button>;
+  }
+  return (
+    <>
+      <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+        <Button onClick={handleToggle}>{options[selectedIndex]?.label || "Connect wallet"}</Button>
+        <Button
+          size="small"
+          aria-controls={open ? "split-button-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
+          aria-label="select merge strategy"
+          aria-haspopup="menu"
+          onClick={handleToggle}
+        >
+          <ArrowDropDownIcon />
+        </Button>
+      </ButtonGroup>
+      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin: placement === "bottom" ? "center top" : "center bottom",
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                <MenuList id="split-button-menu">
+                  {options.map((option, index) => (
+                    <MenuItem
+                      key={option.label}
+                      selected={index === selectedIndex}
+                      onClick={(event) => {
+                        handleMenuItemClick(event, index);
+                        option.handler();
+                      }}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </>
+  );
+}
 
 export default function WalletConnector() {
   const wallet = useWallet();
@@ -9,6 +123,7 @@ export default function WalletConnector() {
 
   return (
     <>
+      <SplitButton />
       <h1>use-wallet</h1>
 
       {(() => {
@@ -31,30 +146,6 @@ export default function WalletConnector() {
             </p>
           );
         }
-
-        if (wallet.status === "connected") {
-          return (
-            <p>
-              <span>Connected.</span>
-              <button onClick={() => wallet.reset()}>disconnect</button>
-            </p>
-          );
-        }
-
-        return (
-          <div className="connect">
-            <div className="connect-label">Connect:</div>
-            <div className="connect-buttons">
-              <button onClick={() => activate("injected")}>Metamask</button>
-              <button onClick={() => activate("frame")}>frame</button>
-              <button onClick={() => activate("portis")}>portis</button>
-              <button onClick={() => activate("fortmatic")}>fortmatic</button>
-              <button onClick={() => activate("torus")}>torus</button>
-              <button onClick={() => activate("walletconnect")}>walletconnect</button>
-              <button onClick={() => activate("walletlink")}>walletlink</button>
-            </div>
-          </div>
-        );
       })()}
 
       {wallet.status === "connected" && (

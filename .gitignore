@@ -7,3 +7,4 @@ cache/
 *.iml
 deployments/
 src/types/
+.envrc

@@ -1,3 +1,5 @@
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import { ethers } from "ethers";
 import React, { useEffect } from "react";
 import styled from "styled-components";
@@ -7,12 +9,10 @@ const provider = ethers.providers.getDefaultProvider("ropsten");
 const address = "0x873bf2251d2B59F4a9e538092E503aFCD78a5de9";
 
 const RootDiv = styled.div`
-  padding: 5rem;
+  margin: 5rem;
 `;
 
-const StyledButton = styled.button`
-  background-color: #dddddd;
-  color: #282c34;
+const StyledButtonGroup = styled(ButtonGroup)`
   margin: 3rem 0 3rem 3rem;
 `;
 
@@ -56,8 +56,8 @@ export default function TokenTransfer() {
     });
   });
   return (
-    <RootDiv className="container text-start">
-      <StyledTable className="text-start">
+    <RootDiv>
+      <StyledTable>
         <tbody>
           <tr>
             <td>Address</td>
@@ -74,7 +74,9 @@ export default function TokenTransfer() {
         </tbody>
       </StyledTable>
 
-      <StyledButton className="btn btn-sm">Save</StyledButton>
+      <StyledButtonGroup variant="contained">
+        <Button>Save</Button>
+      </StyledButtonGroup>
     </RootDiv>
   );
 }

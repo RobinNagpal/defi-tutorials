@@ -1,7 +1,9 @@
 // Override default variables before the import
-$body-bg: #282c34;;
-$body-color: #ddd;
-$font-size-base: 1.5rem;
+body {
+  background-color: #282c34;
+  color: #ddd;
+  font-size: 1.5rem;
+} ;
 
 
 .connect-label {
@@ -16,7 +18,3 @@ $font-size-base: 1.5rem;
   width: 100%;
   height: 4rem;
 }
-
-
-// Import Bootstrap and its default variables
-@import '~bootstrap/scss/bootstrap.scss';
