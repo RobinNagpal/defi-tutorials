@@ -8,6 +8,7 @@ import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import React from "react";
+import styled from "styled-components";
 import TokenAmount from "token-amount";
 import { ConnectionRejectedError, useWallet } from "use-wallet";
 
@@ -16,7 +17,13 @@ interface WalletProvider {
   handler: () => void;
 }
 
-function SplitButton() {
+const RootDiv = styled.div`
+  display: flex;
+  flex-direction: row-reverse;
+  margin: 5rem;
+`;
+
+export default function WalletConnector() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<any>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
@@ -55,120 +62,75 @@ function SplitButton() {
     wallet.reset();
     setSelectedIndex(-1);
   };
-  if (wallet.status === "connected") {
-    return (
-      <ButtonGroup>
-        <Button onClick={() => resetWallet()} color="primary">
-          Disconnect
-        </Button>
-      </ButtonGroup>
-    );
-  }
 
-  if (wallet.status === "connecting") {
-    return <Button>Connecting...</Button>;
-  }
+  const balance = wallet.balance === "-1" ? "…" : TokenAmount.format(wallet.balance, 18, { symbol: "ETH" });
+  const walletAccount = wallet.account;
   return (
-    <>
-      <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-        <Button onClick={handleToggle}>{options[selectedIndex]?.label || "Connect wallet"}</Button>
-        <Button
-          size="small"
-          aria-controls={open ? "split-button-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-label="select merge strategy"
-          aria-haspopup="menu"
-          onClick={handleToggle}
-        >
-          <ArrowDropDownIcon />
-        </Button>
-      </ButtonGroup>
-      <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-        {({ TransitionProps, placement }) => (
-          <Grow
-            {...TransitionProps}
-            style={{
-              transformOrigin: placement === "bottom" ? "center top" : "center bottom",
-            }}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClose}>
-                <MenuList id="split-button-menu">
-                  {options.map((option, index) => (
-                    <MenuItem
-                      key={option.label}
-                      selected={index === selectedIndex}
-                      onClick={(event) => {
-                        handleMenuItemClick(event, index);
-                        option.handler();
-                      }}
-                    >
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Grow>
-        )}
-      </Popper>
-    </>
-  );
-}
-
-export default function WalletConnector() {
-  const wallet = useWallet();
-  const blockNumber = wallet.getBlockNumber!();
-  const activate = (connector: string) => wallet.connect(connector);
-
-  return (
-    <>
-      <SplitButton />
-      <h1>use-wallet</h1>
-
+    <RootDiv>
       {(() => {
-        if (wallet.error?.name) {
+        if (wallet.status === "connected") {
           return (
-            <p>
-              <span>
-                {wallet.error instanceof ConnectionRejectedError ? "Connection error: the user rejected the activation" : wallet.error.name}
-              </span>
-              <button onClick={() => wallet.reset()}>retry</button>
-            </p>
+            <ButtonGroup>
+              <Button onClick={() => resetWallet()} color="primary">
+                Disconnect {walletAccount?.substring(0, 6)}({balance})
+              </Button>
+            </ButtonGroup>
           );
         }
 
         if (wallet.status === "connecting") {
+          return <Button>Connecting...</Button>;
+        }
+
+        if (wallet.status === "disconnected") {
           return (
-            <p>
-              <span>Connecting to {wallet.connector}…</span>
-              <button onClick={() => wallet.reset()}>cancel</button>
-            </p>
+            <>
+              <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
+                <Button onClick={handleToggle}>{options[selectedIndex]?.label || "Connect wallet"}</Button>
+                <Button
+                  size="small"
+                  aria-controls={open ? "split-button-menu" : undefined}
+                  aria-expanded={open ? "true" : undefined}
+                  aria-label="select merge strategy"
+                  aria-haspopup="menu"
+                  onClick={handleToggle}
+                >
+                  <ArrowDropDownIcon />
+                </Button>
+              </ButtonGroup>
+              <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                {({ TransitionProps, placement }) => (
+                  <Grow
+                    {...TransitionProps}
+                    style={{
+                      transformOrigin: placement === "bottom" ? "center top" : "center bottom",
+                    }}
+                  >
+                    <Paper>
+                      <ClickAwayListener onClickAway={handleClose}>
+                        <MenuList id="split-button-menu">
+                          {options.map((option, index) => (
+                            <MenuItem
+                              key={option.label}
+                              selected={index === selectedIndex}
+                              onClick={(event) => {
+                                handleMenuItemClick(event, index);
+                                option.handler();
+                              }}
+                            >
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </MenuList>
+                      </ClickAwayListener>
+                    </Paper>
+                  </Grow>
+                )}
+              </Popper>
+            </>
           );
         }
       })()}
-
-      {wallet.status === "connected" && (
-        <>
-          <p>
-            <span>Account:</span>
-            <span>{wallet.account}</span>
-          </p>
-        </>
-      )}
-
-      {wallet.account && (
-        <p>
-          <span>Balance:</span>
-          <span>{wallet.balance === "-1" ? "…" : TokenAmount.format(wallet.balance, 18, { symbol: "ETH" })}</span>
-        </p>
-      )}
-
-      {wallet.status === "connected" && (
-        <p>
-          <span>Block:</span> <span>{blockNumber || "…"}</span>
-        </p>
-      )}
-    </>
+    </RootDiv>
   );
 }

@@ -41,8 +41,8 @@ function App() {
         },
       }}
     >
-      <AppHeader />
       <WalletConnector />
+      <AppHeader />
       <div className="App">
         <TokenTransfer />
       </div>

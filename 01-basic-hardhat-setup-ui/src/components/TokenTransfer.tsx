@@ -32,12 +32,6 @@ const AddressInput = styled.input`
   min-width: 500px;
 `;
 
-async function connectSigner() {
-  // await provider.sendTransaction("eth_requestAccounts", []);
-  // const signer = provider.getSigner();
-  // console.log("Account:", await signer.getAddress());
-}
-
 export default function TokenTransfer() {
   useEffect(() => {
     provider.getBalance(address).then(function (balance) {
