@@ -4,5 +4,19 @@ $body-color: #ddd;
 $font-size-base: 1.5rem;
 
 
+.connect-label {
+  margin-bottom: 1rem;
+}
+.connect-buttons {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+.connect-buttons button {
+  width: 100%;
+  height: 4rem;
+}
+
+
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';

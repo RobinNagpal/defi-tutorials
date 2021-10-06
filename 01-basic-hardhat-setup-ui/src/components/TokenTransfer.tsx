@@ -1,5 +1,10 @@
-import React from "react";
+import { ethers } from "ethers";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+
+const provider = ethers.providers.getDefaultProvider("ropsten");
+
+const address = "0x873bf2251d2B59F4a9e538092E503aFCD78a5de9";
 
 const RootDiv = styled.div`
   padding: 5rem;
@@ -27,23 +32,46 @@ const AddressInput = styled.input`
   min-width: 500px;
 `;
 
+async function connectSigner() {
+  // await provider.sendTransaction("eth_requestAccounts", []);
+  // const signer = provider.getSigner();
+  // console.log("Account:", await signer.getAddress());
+}
+
 export default function TokenTransfer() {
+  useEffect(() => {
+    provider.getBalance(address).then(function (balance) {
+      // balance is a BigNumber (in wei); format is as a sting (in ether)
+      const etherString = ethers.utils.formatEther(balance);
+
+      console.log("Balance: " + etherString);
+    });
+
+    provider.getTransactionCount(address).then(function (transactionCount) {
+      console.log("Total Transactions Ever Send: " + transactionCount);
+    });
+
+    provider.resolveName("test.ricmoose.eth").then(function (address) {
+      console.log("Address: " + address);
+    });
+  });
   return (
     <RootDiv className="container text-start">
-      <StyledButton className="btn btn-sm">Add Row</StyledButton>
       <StyledTable className="text-start">
-        <tr>
-          <th>Address</th>
-          <th>Amount</th>
-        </tr>
-        <tr>
-          <td>
-            <AddressInput />
-          </td>
-          <td>
-            <input />
-          </td>
-        </tr>
+        <tbody>
+          <tr>
+            <td>Address</td>
+            <td>Amount</td>
+          </tr>
+          <tr>
+            <td>
+              <AddressInput />
+            </td>
+            <td>
+              <input />
+            </td>
+          </tr>
+        </tbody>
       </StyledTable>
 
       <StyledButton className="btn btn-sm">Save</StyledButton>
