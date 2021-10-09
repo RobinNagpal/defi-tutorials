@@ -1,20 +1,25 @@
-// Override default variables before the import
-body {
-  background-color: #282c34;
-  color: #ddd;
-  font-size: 1.5rem;
-} ;
-
-
-.connect-label {
-  margin-bottom: 1rem;
-}
-.connect-buttons {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-}
-.connect-buttons button {
-  width: 100%;
-  height: 4rem;
-}
+//// Override default variables before the import
+//body {
+//  background-color: rgb(10, 25, 41);
+//  color: #ddd;
+//  font-size: 1.5rem;
+//} ;
+//
+//
+//input {
+//  background-color: #ccc !important;
+//  border-radius: 0.2rem;
+//}
+//
+//.connect-label {
+//  margin-bottom: 1rem;
+//}
+//.connect-buttons {
+//  display: grid;
+//  gap: 10px;
+//  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+//}
+//.connect-buttons button {
+//  width: 100%;
+//  height: 4rem;
+//}
