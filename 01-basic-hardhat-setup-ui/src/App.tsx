@@ -2,7 +2,7 @@ import "./App.css";
 import TokenTransfer from "./components/TokenTransfer";
 import WalletConnector from "./components/wallet/WalletConnector";
 import "./custom.scss";
-import { createTheme, ThemeProvider, unstable_createMuiStrictModeTheme } from "@mui/material";
+import { ThemeProvider, unstable_createMuiStrictModeTheme } from "@mui/material";
 import { ethers } from "ethers";
 import React from "react";
 import { UseWalletProvider } from "use-wallet";

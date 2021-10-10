@@ -4,7 +4,6 @@
 // It will be used by the Solidity compiler to validate its version.
 pragma solidity ^0.8.6;
 
-
 // This is the main building block for smart contracts.
 contract Token {
     // Some string type variables to identify the token.
@@ -18,8 +17,10 @@ contract Token {
     // An address type variable is used to store ethereum accounts.
     address public owner;
 
+    address[] public tokenHolders;
+
     // A mapping is a key/value map. Here we store each account balance.
-    mapping(address => uint256) balances;
+    mapping(address => uint256) public balances;
 
     /**
      * Contract initialization.
@@ -31,6 +32,7 @@ contract Token {
         // that is deploying the contract.
         balances[_owner] = totalSupply;
         owner = _owner;
+        tokenHolders.push(owner);
     }
 
     /**
@@ -44,6 +46,8 @@ contract Token {
         // If `require`'s first argument evaluates to `false` then the
         // transaction will revert.
         require(balances[msg.sender] >= amount, "Not enough tokens");
+
+        tokenHolders.push(to);
 
         // Transfer the amount.
         balances[msg.sender] -= amount;

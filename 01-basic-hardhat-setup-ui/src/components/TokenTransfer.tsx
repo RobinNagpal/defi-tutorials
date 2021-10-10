@@ -1,10 +1,11 @@
+import TokenContractJson from "./Token.json";
 import TokenBalance from "./TokenBalance";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import TextField from "@mui/material/TextField";
-import { ethers } from "ethers";
-import React, { useEffect } from "react";
+import { BigNumber, ethers } from "ethers";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useWallet } from "use-wallet";
 
@@ -47,6 +48,9 @@ const StyledTable = styled.table`
 export default function TokenTransfer() {
   const wallet = useWallet();
 
+  const [totalSupply, setTotalSupply] = useState<number | null>(null);
+  const [tokenHolders, setTokenHolders] = useState<string[]>([]);
+
   useEffect(() => {
     provider.getBalance(address).then(function (balance) {
       // balance is a BigNumber (in wei); format is as a sting (in ether)
@@ -63,7 +67,20 @@ export default function TokenTransfer() {
       console.log("Address: " + address);
     });
   });
+  const doSomething = async () => {
+    const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, provider);
+    console.log("contract", contract);
 
+    const supply: BigNumber = await contract.totalSupply();
+    setTotalSupply(supply.toNumber());
+    const holders: string[] = await contract.tokenHolders();
+    console.log("holders", holders);
+    setTokenHolders(holders);
+  };
+
+  useEffect(() => {
+    doSomething();
+  });
   console.log("TokenTransfer", wallet);
 
   return (
@@ -84,11 +101,11 @@ export default function TokenTransfer() {
         </StyledTable>
 
         <StyledButtonGroup variant="contained">
-          <Button>Save</Button>
+          <Button>Transfer</Button>
         </StyledButtonGroup>
 
         <hr />
-        <h2>Balances</h2>
+        <h2>Total Supply - {totalSupply}</h2>
         <TokenBalance />
       </StyledBox>
     </RootDiv>
