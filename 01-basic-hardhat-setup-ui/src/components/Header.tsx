@@ -1,7 +1,7 @@
 import { ViewerProps, withViewer } from "./SignerContext";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 

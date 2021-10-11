@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import TextField from "@mui/material/TextField";
 import { BigNumber, ethers } from "ethers";
+import { getAddress } from "ethers/lib/utils";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -48,8 +49,8 @@ const StyledTable = styled.table`
 function TokenTransfer({ viewer }: ViewerProps) {
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [tokenHolders, setTokenHolders] = useState<string[]>([]);
-  const [sendAddress, setSendAddress] = useState<string | null>(null);
-  const [sendAmount, setSendAmount] = useState<number | null>(null);
+  const [sendAddress, setSendAddress] = useState<string | null>("0x3F41520c4A7C578644d5E5256c1E040e863bD662");
+  const [sendAmount, setSendAmount] = useState<number | null>(100);
   const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, viewer);
 
   const getBalance = async (address: string): Promise<number> => {
@@ -74,7 +75,7 @@ function TokenTransfer({ viewer }: ViewerProps) {
   }, []);
 
   const sendTokens = async () => {
-    contract.transfer(sendAddress, sendAmount);
+    if (sendAddress) contract.transfer(getAddress(sendAddress), BigNumber.from(sendAmount));
   };
 
   const onSendAddressChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -92,26 +93,10 @@ function TokenTransfer({ viewer }: ViewerProps) {
           <tbody>
             <tr>
               <td>
-                <AddressTextField
-                  required
-                  id="filled-required"
-                  label="Address"
-                  variant="filled"
-                  onChange={onSendAddressChange}
-                  value={sendAddress}
-                  defaultValue="0x873bf2251d2B59F4a9e538092E503aFCD78a5de9"
-                />
+                <AddressTextField required id="filled-required" label="Address" variant="filled" onChange={onSendAddressChange} value={sendAddress} />
               </td>
               <td>
-                <TextField
-                  required
-                  id="filled-required"
-                  label="Amount"
-                  variant="filled"
-                  onChange={onSendAmountChange}
-                  value={sendAmount}
-                  defaultValue={100}
-                />
+                <TextField required id="filled-required" label="Amount" variant="filled" onChange={onSendAmountChange} value={sendAmount} />
               </td>
             </tr>
           </tbody>
