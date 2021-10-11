@@ -1,4 +1,5 @@
 import "./App.css";
+import Header from "./components/Header";
 import ViewerContext from "./components/SignerContext";
 import TokenTransfer from "./components/TokenTransfer";
 import "./custom.scss";
@@ -36,7 +37,7 @@ function SignIn(props: { login: () => Promise<void> }) {
 function App() {
   const [signer, setSigner] = useState<JsonRpcSigner | null>(null);
   const login = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+    const provider = new ethers.providers.Web3Provider(window.ethereum, "ropsten");
     await provider.send("eth_requestAccounts", []);
     const signer = provider.getSigner();
     setSigner(signer);
@@ -45,7 +46,16 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <ViewerContext.Provider value={signer}>
-        <div className="App">{signer ? <TokenTransfer /> : <SignIn login={login} />}</div>
+        {signer ? (
+          <>
+            <Header />
+            <div className="App">
+              <TokenTransfer />{" "}
+            </div>
+          </>
+        ) : (
+          <SignIn login={login} />
+        )}
       </ViewerContext.Provider>
     </ThemeProvider>
   );

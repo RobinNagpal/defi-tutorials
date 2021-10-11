@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import TextField from "@mui/material/TextField";
 import { BigNumber, ethers } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 
 const network = ethers.providers.getNetwork({ name: "ropsten", chainId: 3 });
@@ -44,49 +44,46 @@ const StyledTable = styled.table`
     }
   }
 `;
-const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, provider);
 
-function TokenTransfer(props: ViewerProps) {
+function TokenTransfer({ viewer }: ViewerProps) {
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [tokenHolders, setTokenHolders] = useState<string[]>([]);
+  const [sendAddress, setSendAddress] = useState<string | null>(null);
+  const [sendAmount, setSendAmount] = useState<number | null>(null);
+  const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, viewer);
 
   const getBalance = async (address: string): Promise<number> => {
-    const balance: BigNumber = await contract.balanceOf(address);
-    console.log("balance balance", balance);
-    return balance.toNumber();
+    if (address) {
+      const balance: BigNumber = await contract.balanceOf(address);
+      return balance.toNumber();
+    } else {
+      return Promise.resolve(0);
+    }
   };
 
-  useEffect(() => {
-    provider.getBalance(address).then(function (balance) {
-      // balance is a BigNumber (in wei); format is as a sting (in ether)
-      const etherString = ethers.utils.formatEther(balance);
-
-      console.log("Balance: " + etherString);
-    });
-
-    provider.getTransactionCount(address).then(function (transactionCount) {
-      console.log("Total Transactions Ever Send: " + transactionCount);
-    });
-
-    provider.resolveName("test.ricmoose.eth").then(function (address) {
-      console.log("Address: " + address);
-    });
-  }, []);
-
-  const doSomething = async () => {
+  const initialize = async () => {
     console.log("contract", contract);
-
     const supply: BigNumber = await contract.totalSupply();
     setTotalSupply(supply.toNumber());
     const holders: string[] = await contract.getTokenHoldersArray();
-    console.log("holders", holders);
     setTokenHolders(holders);
   };
 
   useEffect(() => {
-    doSomething();
+    initialize();
   }, []);
 
+  const sendTokens = async () => {
+    contract.transfer(sendAddress, sendAmount);
+  };
+
+  const onSendAddressChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setSendAddress(e.target.value);
+  };
+
+  const onSendAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) setSendAmount(parseInt(e.target.value));
+  };
   return (
     <RootDiv>
       <StyledBox>
@@ -95,17 +92,33 @@ function TokenTransfer(props: ViewerProps) {
           <tbody>
             <tr>
               <td>
-                <AddressTextField required id="filled-required" label="Address" variant="filled" />
+                <AddressTextField
+                  required
+                  id="filled-required"
+                  label="Address"
+                  variant="filled"
+                  onChange={onSendAddressChange}
+                  value={sendAddress}
+                  defaultValue="0x873bf2251d2B59F4a9e538092E503aFCD78a5de9"
+                />
               </td>
               <td>
-                <TextField required id="filled-required" label="Amount" variant="filled" />
+                <TextField
+                  required
+                  id="filled-required"
+                  label="Amount"
+                  variant="filled"
+                  onChange={onSendAmountChange}
+                  value={sendAmount}
+                  defaultValue={100}
+                />
               </td>
             </tr>
           </tbody>
         </StyledTable>
 
         <StyledButtonGroup variant="contained">
-          <Button>Transfer</Button>
+          <Button onClick={() => sendTokens()}>Transfer</Button>
         </StyledButtonGroup>
 
         <hr />
