@@ -44,12 +44,19 @@ const StyledTable = styled.table`
     }
   }
 `;
+const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, provider);
 
 export default function TokenTransfer() {
   const wallet = useWallet();
 
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [tokenHolders, setTokenHolders] = useState<string[]>([]);
+
+  const getBalance = async (address: string): Promise<number> => {
+    const balance: BigNumber = await contract.balanceOf(address);
+    console.log("balance balance", balance);
+    return balance.toNumber();
+  };
 
   useEffect(() => {
     provider.getBalance(address).then(function (balance) {
@@ -66,21 +73,21 @@ export default function TokenTransfer() {
     provider.resolveName("test.ricmoose.eth").then(function (address) {
       console.log("Address: " + address);
     });
-  });
+  }, []);
+
   const doSomething = async () => {
-    const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, provider);
     console.log("contract", contract);
 
     const supply: BigNumber = await contract.totalSupply();
     setTotalSupply(supply.toNumber());
-    const holders: string[] = await contract.tokenHolders();
+    const holders: string[] = await contract.getTokenHoldersArray();
     console.log("holders", holders);
     setTokenHolders(holders);
   };
 
   useEffect(() => {
     doSomething();
-  });
+  }, []);
   console.log("TokenTransfer", wallet);
 
   return (
@@ -106,7 +113,7 @@ export default function TokenTransfer() {
 
         <hr />
         <h2>Total Supply - {totalSupply}</h2>
-        <TokenBalance />
+        <TokenBalance getBalance={getBalance} tokenHolders={tokenHolders} />
       </StyledBox>
     </RootDiv>
   );
