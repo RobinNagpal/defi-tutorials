@@ -1,4 +1,3 @@
-import TokenTransfer from "../TokenTransfer";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -8,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import TokenAmount from "token-amount";
 import { useWallet, UseWalletProvider } from "use-wallet";
