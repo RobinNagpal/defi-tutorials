@@ -1,3 +1,4 @@
+import TokenTransfer from "../TokenTransfer";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -10,7 +11,7 @@ import Popper from "@mui/material/Popper";
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import TokenAmount from "token-amount";
-import { useWallet } from "use-wallet";
+import { useWallet, UseWalletProvider } from "use-wallet";
 
 interface WalletProvider {
   label: string;
@@ -132,5 +133,41 @@ export default function WalletConnector() {
         }
       })()}
     </RootDiv>
+  );
+}
+
+export function withWalletProvider(render: () => React.Component) {
+  return (
+    <UseWalletProvider
+      connectors={{
+        injected: {
+          //allows you to connect and switch between mainnet and rinkeby within Metamask.
+          chainId: [3],
+        },
+        fortmatic: {
+          chainId: [1],
+          apiKey: "",
+        },
+
+        metamask: {
+          chainId: [3],
+        },
+        portis: {
+          dAppId: "",
+          chainId: [1],
+        },
+        walletconnect: {
+          chainId: [1],
+          rpcUrl: "https://mainnet.eth.aragon.network/",
+        },
+        walletlink: {
+          chainId: [1],
+          url: "https://mainnet.eth.aragon.network/",
+        },
+      }}
+    >
+      <WalletConnector />
+      {render()}
+    </UseWalletProvider>
   );
 }

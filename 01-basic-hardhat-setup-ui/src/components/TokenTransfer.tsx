@@ -1,3 +1,4 @@
+import { ViewerProps, withViewer } from "./SignerContext";
 import TokenContractJson from "./Token.json";
 import TokenBalance from "./TokenBalance";
 import Box from "@mui/material/Box";
@@ -7,7 +8,6 @@ import TextField from "@mui/material/TextField";
 import { BigNumber, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useWallet } from "use-wallet";
 
 const network = ethers.providers.getNetwork({ name: "ropsten", chainId: 3 });
 const provider = ethers.providers.getDefaultProvider("ropsten");
@@ -46,9 +46,7 @@ const StyledTable = styled.table`
 `;
 const contract = new ethers.Contract(TokenContractJson.address, TokenContractJson.abi, provider);
 
-export default function TokenTransfer() {
-  const wallet = useWallet();
-
+function TokenTransfer(props: ViewerProps) {
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [tokenHolders, setTokenHolders] = useState<string[]>([]);
 
@@ -88,7 +86,6 @@ export default function TokenTransfer() {
   useEffect(() => {
     doSomething();
   }, []);
-  console.log("TokenTransfer", wallet);
 
   return (
     <RootDiv>
@@ -118,3 +115,5 @@ export default function TokenTransfer() {
     </RootDiv>
   );
 }
+
+export default withViewer(TokenTransfer);
