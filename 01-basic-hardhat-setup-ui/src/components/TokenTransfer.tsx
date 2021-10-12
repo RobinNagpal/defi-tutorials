@@ -66,7 +66,7 @@ function TokenTransfer({ viewer }: ViewerProps) {
     console.log("contract", contract);
     const supply: BigNumber = await contract.totalSupply();
     setTotalSupply(supply.toNumber());
-    const holders: string[] = await contract.getTokenHoldersArray();
+    const holders: string[] = await contract.getTokenHolders();
     setTokenHolders(holders);
   };
 

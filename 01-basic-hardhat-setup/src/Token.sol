@@ -8,8 +8,8 @@ pragma solidity ^0.8.6;
 contract Token {
     // Some string type variables to identify the token.
     // The `public` modifier makes a variable readable from outside the contract.
-    string public name = "My Hardhat Token";
-    string public symbol = "MBT";
+    string public name = "Jomo Dev Token";
+    string public symbol = "JOMO";
 
     // The fixed amount of tokens stored in an unsigned integer type variable.
     uint256 public totalSupply = 1000000;
@@ -17,10 +17,15 @@ contract Token {
     // An address type variable is used to store ethereum accounts.
     address public owner;
 
-    address[] public tokenHolders;
-
     // A mapping is a key/value map. Here we store each account balance.
     mapping(address => uint256) public balances;
+
+    struct Set {
+        address[] values;
+        mapping(address => bool) is_in;
+    }
+
+    Set tokenHolders;
 
     /**
      * Contract initialization.
@@ -32,7 +37,7 @@ contract Token {
         // that is deploying the contract.
         balances[_owner] = totalSupply;
         owner = _owner;
-        tokenHolders.push(owner);
+        tokenHolders.values.push(owner);
     }
 
     /**
@@ -47,7 +52,10 @@ contract Token {
         // transaction will revert.
         require(balances[msg.sender] >= amount, "Not enough tokens");
 
-        tokenHolders.push(to);
+        if (!tokenHolders.is_in[to]) {
+            tokenHolders.values.push(to);
+            tokenHolders.is_in[to] = true;
+        }
 
         // Transfer the amount.
         balances[msg.sender] -= amount;
@@ -64,7 +72,7 @@ contract Token {
         return balances[account];
     }
 
-    function getTokenHoldersArray() external view returns (address[] memory) {
-        return tokenHolders;
+    function getTokenHolders() external view returns (address[] memory) {
+        return tokenHolders.values;
     }
 }
