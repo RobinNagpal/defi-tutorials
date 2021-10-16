@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@openzeppelin/hardhat-upgrades": "^1.10.0",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.10.2",
@@ -19,6 +21,11 @@
     "typescript": "^4.4.3"
   },
   "scripts": {
-    "deploy": "hardhat deploy --network ropsten"
+    "deploy": "hardhat deploy --network ropsten",
+    "create-contract": " npx hardhat run scripts/createTokenContract.ts --network ropsten",
+    "update-contract": " npx hardhat --network ropsten run scripts/updateTokenContract.ts "
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^4.3.2"
   }
 }

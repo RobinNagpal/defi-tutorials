@@ -10,11 +10,6 @@ import { getAddress } from "ethers/lib/utils";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 
-const network = ethers.providers.getNetwork({ name: "ropsten", chainId: 3 });
-const provider = ethers.providers.getDefaultProvider("ropsten");
-
-const address = "0x873bf2251d2B59F4a9e538092E503aFCD78a5de9";
-
 const StyledBox = styled(Box)``;
 
 const RootDiv = styled.div`

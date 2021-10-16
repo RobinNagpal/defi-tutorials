@@ -1,4 +1,5 @@
 import { node_url, accounts } from "./utils/network";
+import "@openzeppelin/hardhat-upgrades";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 import { HardhatUserConfig } from "hardhat/types";
@@ -15,6 +16,8 @@ const config: HardhatUserConfig = {
     ropsten: {
       url: node_url("ropsten"),
       accounts: accounts("ropsten"),
+      gas: 2100000,
+      gasPrice: 8000000000,
     },
   },
   paths: {

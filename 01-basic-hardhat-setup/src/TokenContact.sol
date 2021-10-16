@@ -4,15 +4,18 @@
 // It will be used by the Solidity compiler to validate its version.
 pragma solidity ^0.8.6;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 // This is the main building block for smart contracts.
-contract Token {
+contract TokenContact is Initializable {
     // Some string type variables to identify the token.
     // The `public` modifier makes a variable readable from outside the contract.
-    string public name = "Jomo Dev Token";
-    string public symbol = "JOMO";
+    string public name;
+
+    string public symbol;
 
     // The fixed amount of tokens stored in an unsigned integer type variable.
-    uint256 public totalSupply = 1000000;
+    uint256 public totalSupply;
 
     // An address type variable is used to store ethereum accounts.
     address public owner;
@@ -32,11 +35,19 @@ contract Token {
      *
      * The `constructor` is executed only once when the contract is created.
      */
-    constructor(address _owner) {
+    function initialize(
+        string calldata _symbol,
+        string calldata _name,
+        uint256 _totalSupply
+    ) public initializer {
         // The totalSupply is assigned to transaction sender, which is the account
         // that is deploying the contract.
-        balances[_owner] = totalSupply;
-        owner = _owner;
+        name = _name;
+        symbol = _symbol;
+        totalSupply = _totalSupply;
+        owner = msg.sender;
+        balances[msg.sender] = totalSupply;
+
         tokenHolders.values.push(owner);
     }
 

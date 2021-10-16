@@ -7,3 +7,6 @@ cache/
 *.iml
 deployments/
 src/types/
+
+# OpenZeppelin
+.openzeppelin/unknown-*.json
